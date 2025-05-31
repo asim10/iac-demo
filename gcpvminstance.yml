@@ -1,0 +1,36 @@
+- name: Create a GCP instance
+  hosts: localhost
+  vars:
+    project_id: "upgradlabs-1746954675499"
+    zone: "asia-south1-c"
+    instance_name: "webserver"
+    machine_type: "n1-standard-1"
+    image_project: "debian-cloud"
+    image_family: "debian-11"
+    # ssh_user: "labuser"
+    # ssh_public_key: "{{ lookup('file', '<your-public-key>') }}"
+  tasks:
+    - name: Create GCP Compute Instance
+      google.cloud.gcp_compute_instance:
+        auth_kind: application
+        name: "{{ instance_name }}"
+        machine_type: "{{ machine_type }}"
+        zone: "{{ zone }}"
+        project: "{{ project_id }}"
+        disks:
+          - auto_delete: true
+            boot: true
+            initialize_params:
+              source_image: "projects/{{ image_project }}/global/images/family/{{ image_family }}"
+        state: present
+        network_interfaces:
+          - access_configs:
+              - name: External NAT
+                type: ONE_TO_ONE_NAT
+            network:
+              selfLink: "projects/{{ project_id }}/global/networks/default"
+      register: gcp_vm_create
+
+    - name: Show VM instance details
+      debug:
+        var: gcp_vm_create
