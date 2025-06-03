@@ -10,7 +10,7 @@ terraform {
 provider "google" {
   # Configuration options
   project = var.project
-  region = var.project
+  region = var.region
 }
 
 resource "google_storage_bucket" "my_bucket" {
