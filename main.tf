@@ -15,5 +15,5 @@ provider "google" {
 
 resource "google_storage_bucket" "my_bucket" {
   name     = "jenkins-iac-bucket-001"
-  location = "Asia"
+  location = var.location
 }
